@@ -3,10 +3,17 @@ local.config.ts
 playwright-report/
 .local-browsers/
 
-
 # Playwright
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Added for environment variables & API token architecture
+.env
+.auth/
+
+# Misc
+misc/
+

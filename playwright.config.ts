@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import "dotenv/config";
 
 process.env.PLAYWRIGHT_BROWSERS_PATH = "./.local-browsers";
 
