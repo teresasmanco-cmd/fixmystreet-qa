@@ -13,7 +13,7 @@
       "@/constants/*": ["./src/constants/*"],
       "@/utils/*": ["./src/utils/*"],
       "@global-constants/*": ["./src/constants/*"],
-      "@constants/*": ["./src/specs/*.constants/*"]
+      "@constants/*": ["./src/specs/.constants/*"]
     }
   },
   "include": ["playwright.config.ts", "src/**/*", "tests/**/*"]

@@ -15,8 +15,10 @@ process.env.PLAYWRIGHT_BROWSERS_PATH = "./.local-browsers";
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: "./tests",
+  testDir: "./src/specs",
   tsconfig: "./tsconfig.json",
+  // Look for files that end in test.ts rather than Playwright's default spec.ts
+  testMatch: "**/*.test.ts",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
