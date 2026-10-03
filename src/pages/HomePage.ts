@@ -6,7 +6,11 @@ export class HomePage extends BasePage {
     super(page);
   }
 
-  async goto() {
-    await this.page.goto("/");
+  /**
+   *
+   * @param url
+   */
+  async goto(url: string = "/") {
+    await this.page.goto(url);
   }
 }
