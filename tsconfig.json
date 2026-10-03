@@ -6,7 +6,15 @@
     "types": ["node"],
     "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@/pages/*": ["./src/pages/*"],
+      "@/specs/*": ["./src/specs/*"],
+      "@/constants/*": ["./src/constants/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@global-constants/*": ["./src/constants/*"],
+      "@constants/*": ["./src/specs/*.constants/*"]
+    }
   },
   "include": ["playwright.config.ts", "src/**/*", "tests/**/*"]
 }
