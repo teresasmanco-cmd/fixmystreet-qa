@@ -1,9 +1,9 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "@/specs/fixtures";
 
 test.describe("application status smoke suite", () => {
-  test("verify the landing page is functional", async ({ page }) => {
-    await page.goto("/");
+  test("verify the landing page is functional", async ({ homePage }) => {
+    await homePage.goto("/");
 
-    await expect(page).toHaveTitle("FixMyStreet");
+    await expect(homePage.page).toHaveTitle("FixMyStreet");
   });
 });
