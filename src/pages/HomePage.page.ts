@@ -16,15 +16,6 @@ export class HomePage extends BasePage {
   }
 
   /**
-   *Returns the browser validation message that is generated after the user presses 'Go' without entering a value in the text field
-   * @returns a string 'validationText' with the validation message from the browser (ie: 'Please Fill in/out this field - depending on the browser)
-   */
-  async getValidationMessage(): Promise<string> {
-    let validationText
-    return validationText = this.pcInput.evaluate((element) => (element as HTMLInputElement).validationMessage);
-  }
-
-  /**
    * Navigates to the FixMyStreet homepage/landing page
    * @param url The url of the homepage
    * @example await homePage.goto()

@@ -6,7 +6,8 @@ test.describe("user reports", () => {
 
     await test.step('enter no postcode and press the "go" button', async () => {
       await homePage.goButton.click();
-      expect(await homePage.getValidationMessage()).toMatch(/^Please fill/);
+
+      await expect(homePage.postcodeTextInput).toHaveJSProperty("validity.valueMissing", true);
     });
   });
 
