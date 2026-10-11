@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 import "dotenv/config";
-import dotenv from 'dotenv';
-import path from 'path';
+import dotenv from "dotenv";
+import path from "path";
 
 process.env.PLAYWRIGHT_BROWSERS_PATH = "./.local-browsers";
 
@@ -9,7 +9,7 @@ process.env.PLAYWRIGHT_BROWSERS_PATH = "./.local-browsers";
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -79,9 +79,16 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "docker compose up -d",
-    url: process.env.BASE_URL || "http://localhost:8000",
+    //Only execute 'docker compose' inside CI environments.
+    // Locally (when process.env.CI is undefined), we pass an empty string so Playwright skips container manipulation.
+    command: process.env.CI ? "docker compose -f docker/docker-compose.yml up -d" : "",
+
+    //Change 'localhost' to the absolute IPv4 loopback to avoid node-to-ipv6 translation delays
+    url: process.env.BASE_URL || "http://127.0.0.1:8000",
+
+    //Immediately uses your active container if port 8000 is open
     reuseExistingServer: !process.env.CI,
+
     timeout: 120 * 1000,
   },
 });

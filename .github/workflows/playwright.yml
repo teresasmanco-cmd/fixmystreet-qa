@@ -1,93 +1,69 @@
-# name: Playwright Tests
-# on:
-#   push:
-#     branches: [ main, master ]
-#   pull_request:
-#     branches: [ main, master ]
-# jobs:
-#   test:
-#     timeout-minutes: 60
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v4
-#     - uses: actions/setup-node@v4
-#       with:
-#         node-version: lts/*
-#     - name: Install dependencies
-#       run: npm ci
-#     - name: Install Playwright Browsers
-#       run: npx playwright install --with-deps
-#     - name: Run Playwright tests
-#       run: npx playwright test
-#     - uses: actions/upload-artifact@v4
-#       if: ${{ !cancelled() }}
-#       with:
-#         name: playwright-report
-#         path: playwright-report/
-#         retention-days: 30
+name: Playwright End-to-End Tests
 
-        name: Playwright Tests
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    # 1. Check out the QA repository (where this workflow lives)
-    - name: Checkout QA Repo
-      uses: actions/checkout@v4
-      with:
-        path: fixmystreet-qa
+      # 1. Check out the QA repository (where this workflow lives)
+      - name: Checkout QA Repo
+        uses: actions/checkout@v4
+        with:
+          path: fixmystreet-qa
 
-    # 2. Check out the main FixMyStreet app repository (so we have the Docker files)
-    - name: Checkout FixMyStreet Core Repo
-      uses: actions/checkout@v4
-      with:
-        repository: mysociety/fixmystreet # Replace with your actual org/repo name if it is private
-        path: fixmystreet
+      # 2. Check out the main FixMyStreet app repository (so we have the Docker files)
+      - name: Checkout FixMyStreet Core Repo
+        uses: actions/checkout@v4
+        with:
+          repository: mysociety/fixmystreet
+          path: fixmystreet
 
-    # 3. Standard Node setup inside the QA folder
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
+      # 3. Standard Node setup inside the QA folder
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
-    - name: Install dependencies
-      working-directory: ./fixmystreet-qa
-      run: npm ci
+      - name: Install dependencies
+        working-directory: ./fixmystreet-qa
+        run: npm ci
 
-    - name: Install Playwright Browsers
-      working-directory: ./fixmystreet-qa
-      run: npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        working-directory: ./fixmystreet-qa
+        run: npx playwright install --with-deps
 
-    # 4. Start the application infrastructure using the core repo's docker-compose
-    - name: Start FixMyStreet Stack
-      working-directory: ./fixmystreet
-      run: docker compose up -d
+      # 4. Start the application infrastructure using the core repo's docker-compose
+      - name: Start FixMyStreet Stack
+        working-directory: ./fixmystreet
+        run: docker compose up -d
 
-    # 5. Wait for Nginx proxy on Port 8000 to wake up completely
-    - name: Wait for FixMyStreet to be ready
-      run: |
-        echo "Waiting for FixMyStreet proxy to boot on port 8000..."
-        until $(curl --output /dev/null --silent --head --fail http://localhost:8000); do
-            printf '.'
-            sleep 5
-        done
+      # 5. Wait for Nginx proxy on Port 8000 to wake up completely
+      - name: Wait for FixMyStreet to be ready
+        run: |
+          echo "Waiting for FixMyStreet proxy to boot on port 8000..."
+          until $(curl --output /dev/null --silent --head --fail http://localhost:8000); do
+              printf '.'
+              sleep 5
+          done
 
-    # 6. Execute tests pointing directly at the running containers
-    - name: Run Playwright tests
-      working-directory: ./fixmystreet-qa
-      run: npx playwright test
-      env:
-        BASE_URL: http://localhost:8000
+      # 6. Execute tests pointing directly at the running containers
+      - name: Run Playwright tests
+        working-directory: ./fixmystreet-qa
+        run: npx playwright test
+        env:
+          BASE_URL: http://localhost:8000
 
-    # 7. Upload results
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: fixmystreet-qa/playwright-report/
-        retention-days: 30
+      # 7. Upload results
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: fixmystreet-qa/playwright-report/
+          retention-days: 30
