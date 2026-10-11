@@ -7,9 +7,12 @@ test.describe("user reports", () => {
     await test.step('enter no postcode and press the "go" button', async () => {
       await homePage.goButton.click();
 
+      //Evaluates the browser's native validity block and auto-retries until it's true
       await expect(homePage.postcodeTextInput).toHaveJSProperty("validity.valueMissing", true);
     });
   });
+
+  test("verify that an invalid input triggers the correct message to the user", async () => {});
 
   test("verify that a user can successfully report a problem", async ({ homePage }) => {
     await homePage.goto();
