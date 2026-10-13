@@ -79,15 +79,14 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    //Only execute 'docker compose' inside CI environments.
-    // Locally (when process.env.CI is undefined), we pass an empty string so Playwright skips container manipulation.
-    command: process.env.CI ? "docker compose -f docker/docker-compose.yml up -d" : "",
+    // In CI, we pass an empty string because the YAML workflow handles the Docker launch.
+    // Locally, it also stays empty, meaning Playwright will never try to spin up Docker itself.
+    command: "",
 
-    //Change 'localhost' to the absolute IPv4 loopback to avoid node-to-ipv6 translation delays
     url: process.env.BASE_URL || "http://127.0.0.1:8000",
 
-    //Immediately uses your active container if port 8000 is open
-    reuseExistingServer: !process.env.CI,
+    // For local runs so it hooks straight into the open browser port
+    reuseExistingServer: true,
 
     timeout: 120 * 1000,
   },
