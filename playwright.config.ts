@@ -81,7 +81,7 @@ export default defineConfig({
   webServer: {
     // In CI, we pass an empty string because the YAML workflow handles the Docker launch.
     // Locally, it also stays empty, meaning Playwright will never try to spin up Docker itself.
-    command: "",
+    command: process.env.CI ? "" : "docker compose -f docker/docker-compose.yml up -d",
 
     url: process.env.BASE_URL || "http://127.0.0.1:8000",
 
