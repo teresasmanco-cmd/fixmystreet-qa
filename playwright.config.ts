@@ -78,16 +78,16 @@ export default defineConfig({
   // ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    // In CI, we pass an empty string because the YAML workflow handles the Docker launch.
-    // Locally, it also stays empty, meaning Playwright will never try to spin up Docker itself.
-    command: process.env.CI ? "" : "docker compose -f docker/docker-compose.yml up -d",
+  // webServer: {
+  //   // In CI, we pass an empty string because the YAML workflow handles the Docker launch.
+  //   // Locally, it also stays empty, meaning Playwright will never try to spin up Docker itself.
+  //   command: process.env.CI ? "" : "docker compose -f docker/docker-compose.yml up -d",
 
-    url: process.env.BASE_URL || "http://127.0.0.1:8000",
+  //   url: process.env.BASE_URL || "http://127.0.0.1:8000",
 
-    // For local runs so it hooks straight into the open browser port
-    reuseExistingServer: true,
+  //   // For local runs so it hooks straight into the open browser port
+  //   reuseExistingServer: true,
 
-    timeout: 120 * 1000,
-  },
+  //   timeout: 120 * 1000,
+  // },
 });
