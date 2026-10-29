@@ -24,6 +24,7 @@ test.describe("user reports", () => {
         await expect(homePage.postCodeError, 'error message should be visible').toBeVisible();
   });
 
+  //Signed in users and not signed in users get different paths - start with not signed in first
   test("verify that a user can successfully report a problem", async ({ homePage }) => {
     await homePage.goto();
     //WIP, haven't done all the work here yet

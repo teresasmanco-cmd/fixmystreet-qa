@@ -13,7 +13,7 @@ export class HomePage extends BasePage {
     this.postcodeTextInput = page.getByRole("textbox", { name: "Add a postcode or address." });
     //pc-hint area of the page, can be used to concatenate on to get other elements on the text input field area
     this.pcInput = page.locator("#pc");
-    this.postCodeError = page.locator(".error-msg").filter({ hasText: /please enter a valid postcode or area/i });
+    this.postCodeError = page.locator("#pc-error").filter({ hasText: /please enter a valid postcode or area/i });
     this.goButton = page.getByRole("button", { name: "Go" });
   }
 
