@@ -3,26 +3,6 @@ import { test, expect } from "@/specs/fixtures";
 test.describe("user reports", () => {
   //Signed in users and not signed in users get different paths - start with not signed in first
   test("verify full user journey and email confirmation", async ({ homePage, reportsPage, request, page }) => {
-    //API mocking for CI as I couldn't find a solution to get the mail content from Mailhog on Github
-    if (process.env.CI) {
-      await page.route("**/api/v2/search*", async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            total: 1,
-            items: [
-              {
-                Content: {
-                  Body: "Please click here to confirm: http://localhost:8000/P/MOCK_TOKEN_123",
-                },
-              },
-            ],
-          }),
-        });
-      });
-    }
-
     await homePage.goto();
     //WIP, haven't done all the work here yet
     await test.step("enter a postcode in the text input field", async () => {
@@ -54,37 +34,32 @@ test.describe("user reports", () => {
     await test.step("get the confirmation email via api and navigate to the confirmation link", async () => {
       let emailBody = "";
 
-      // Poll MailHog up to 10 times, waiting 1 second between tries until the email arrives
-      for (let i = 0; i < 10; i++) {
-        const response = await request.get("http://localhost:8025/api/v2/search?kind=to&query=test.email@test.com");
-        expect(response.ok()).toBeTruthy();
-
-        const data = await response.json();
-
-        if (data.items && data.items.length > 0) {
-          emailBody = data.items[0].Content.Body;
-          break; // Exit the loop as soon as we find our email
+      //Mocking the response on CI as I can't set that up with Mailhog
+      if (process.env.CI) {
+        emailBody = "Please click here to confirm: http://localhost:8000/P/MOCK_TOKEN_123";
+      } else {
+        // Locally, poll MailHog via the API request fixture
+        for (let i = 0; i < 10; i++) {
+          const response = await request.get("http://localhost:8025/api/v2/search?kind=to&query=test.email@test.com");
+          if (response.ok()) {
+            const data = await response.json();
+            if (data.items && data.items.length > 0) {
+              emailBody = data.items[0].Content.Body;
+              break;
+            }
+          }
+          await page.waitForTimeout(1000);
         }
-
-        // If the inbox is still empty, wait 1 second and loop again
-        await page.waitForTimeout(1000);
       }
 
-      // Temporary debug check inside the loop:
-      const allMessagesRes = await request.get("http://localhost:8025/api/v2/messages");
-      const allMessagesJson = await allMessagesRes.json();
-      console.log("Total messages currently in MailHog:", allMessagesJson.total);
-
-      // Ensure we actually found an email body before running the regex
+      // Ensure we have an email body (either real or mocked)
       expect(emailBody).not.toBe("");
 
+      // Confirmation link extracted via regex, navigate to it
       const match = emailBody.match(/http:\/\/localhost:8000\/[^\s]+/);
+      expect(match, "Confirmation URL link should be found").not.toBeNull();
 
-      if (!match) {
-        throw new Error("Confirmation URL link could not be found in the email body!");
-      }
-
-      await reportsPage.page.goto(match[0]);
+      await reportsPage.page.goto(match![0]);
     });
   });
 });
