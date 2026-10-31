@@ -1,6 +1,6 @@
 import { test, expect } from "@/specs/fixtures";
 
-test.describe("user reports", () => {
+test.describe("sanity checks", () => {
   test("verify that a validation message appears when no postcode is entered", { annotation: { type: "test", description: "001" } }, async ({ homePage }) => {
     await homePage.goto();
 
@@ -12,26 +12,15 @@ test.describe("user reports", () => {
     });
   });
 
-  test("verify that an invalid input triggers the correct message to the user", async ({homePage}) => {
-        await homePage.goto();
-        //WIP, haven't done all the work here yet
-        await test.step("enter a postcode in the text input field", async () => {
-          await homePage.postcodeTextInput.click();
-          await homePage.postcodeTextInput.fill(".");
-          await homePage.goButton.click();
-        });
-
-        await expect(homePage.postCodeError, 'error message should be visible').toBeVisible();
-  });
-
-  //Signed in users and not signed in users get different paths - start with not signed in first
-  test("verify that a user can successfully report a problem", async ({ homePage }) => {
+  test("verify that an invalid input triggers the correct message to the user", async ({ homePage }) => {
     await homePage.goto();
     //WIP, haven't done all the work here yet
     await test.step("enter a postcode in the text input field", async () => {
       await homePage.postcodeTextInput.click();
-      await homePage.postcodeTextInput.fill("");
+      await homePage.postcodeTextInput.fill(".");
       await homePage.goButton.click();
     });
+
+    await expect(homePage.postCodeError, "error message should be visible").toBeVisible();
   });
 });
