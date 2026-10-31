@@ -24,12 +24,6 @@ jobs:
           repository: mysociety/fixmystreet
           path: fixmystreet
 
-      # 2.5. Inject MailHog configuration so FixMyStreet routes mail to our container
-      - name: Configure SMTP in FixMyStreet
-        run: |
-          echo "SMTP_SMARTHOST: 'email.svc'" >> fixmystreet/conf/general.yml
-          echo "SMTP_PORT: 1025" >> fixmystreet/conf/general.yml
-
       # 3. Standard Node setup inside the QA folder
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,21 +38,11 @@ jobs:
         working-directory: ./fixmystreet-qa
         run: npx playwright install --with-deps
 
-      # 3.5. Configure FixMyStreet to route emails to MailHog
-      - name: Configure MailHog SMTP in General Config
-        run: |
-          echo "SMTP_SMARTHOST: 'localhost'" >> fixmystreet/conf/general.yml
-          echo "SMTP_PORT: 1025" >> fixmystreet/conf/general.yml
-
-      # 4. Start the application infrastructure using the core repo's docker-compose
+     # 4. Start the development application stack (which natively includes MailHog on the same network)
       - name: Start FixMyStreet Stack
         working-directory: ./fixmystreet
-        run: docker compose up -d
-
-      - name: Start MailHog Catcher and Join Network
-        run: |
-          docker run -d -p 8025:8025 -p 1025:1025 --name mailhog --network fixmystreet_default --network-alias email.svc mailhog/mailhog:v1.0.1
-
+        run: docker compose -f docker-compose-dev.yml up -d
+        
       # 5. Wait for Nginx proxy on Port 8000 to wake up completely
       - name: Wait for FixMyStreet to be ready
         run: |
