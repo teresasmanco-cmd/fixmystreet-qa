@@ -3,6 +3,26 @@ import { test, expect } from "@/specs/fixtures";
 test.describe("user reports", () => {
   //Signed in users and not signed in users get different paths - start with not signed in first
   test("verify full user journey and email confirmation", async ({ homePage, reportsPage, request, page }) => {
+    //API mocking for CI as I couldn't find a solution to get the mail content from Mailhog on Github
+    if (process.env.CI) {
+      await page.route("**/api/v2/search*", async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            total: 1,
+            items: [
+              {
+                Content: {
+                  Body: "Please click here to confirm: http://localhost:8000/P/MOCK_TOKEN_123",
+                },
+              },
+            ],
+          }),
+        });
+      });
+    }
+
     await homePage.goto();
     //WIP, haven't done all the work here yet
     await test.step("enter a postcode in the text input field", async () => {
