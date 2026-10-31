@@ -36,8 +36,8 @@ test.describe("user reports", () => {
       expect(response.ok()).toBeTruthy();
 
       const data = await response.json();
-      console.log(JSON.stringify(data, null, 2));
-
+      // Prints the json file into the terminal
+      // console.log(JSON.stringify(data, null, 2));
 
       const latestMessage = data.items[0];
       const emailBody = latestMessage.Content.Body;

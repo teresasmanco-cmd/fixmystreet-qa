@@ -41,7 +41,7 @@ jobs:
       # 4. Start the application infrastructure using the core repo's docker-compose
       - name: Start FixMyStreet Stack
         working-directory: ./fixmystreet
-        run: docker compose up -d
+        run: docker compose up -d db mailhog
 
       # 5. Wait for Nginx proxy on Port 8000 to wake up completely
       - name: Wait for FixMyStreet to be ready
