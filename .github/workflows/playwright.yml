@@ -24,6 +24,12 @@ jobs:
           repository: mysociety/fixmystreet
           path: fixmystreet
 
+      # 2.5. Inject MailHog configuration so FixMyStreet routes mail to our container
+      - name: Configure SMTP in FixMyStreet
+        run: |
+          echo "SMTP_SMARTHOST: 'email.svc'" >> fixmystreet/conf/general.yml
+          echo "SMTP_PORT: 1025" >> fixmystreet/conf/general.yml
+
       # 3. Standard Node setup inside the QA folder
       - name: Setup Node.js
         uses: actions/setup-node@v4
