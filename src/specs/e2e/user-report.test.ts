@@ -65,6 +65,6 @@ test.describe("user reports", () => {
       }
 
       await reportsPage.page.goto(match[0]);
-    };);
+    });
   });
 });
