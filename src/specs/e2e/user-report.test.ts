@@ -50,6 +50,11 @@ test.describe("user reports", () => {
         await page.waitForTimeout(1000);
       }
 
+      // Temporary debug check inside the loop:
+      const allMessagesRes = await request.get("http://localhost:8025/api/v2/messages");
+      const allMessagesJson = await allMessagesRes.json();
+      console.log("Total messages currently in MailHog:", allMessagesJson.total);
+
       // Ensure we actually found an email body before running the regex
       expect(emailBody).not.toBe("");
 
@@ -60,6 +65,6 @@ test.describe("user reports", () => {
       }
 
       await reportsPage.page.goto(match[0]);
-    });
+    };);
   });
 });
