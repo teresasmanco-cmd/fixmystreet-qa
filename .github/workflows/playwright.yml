@@ -38,11 +38,11 @@ jobs:
         working-directory: ./fixmystreet-qa
         run: npx playwright install --with-deps
 
-     # 4. Start the development application stack (which natively includes MailHog on the same network)
+      # 4. Start the application infrastructure using the correct path to the development compose file
       - name: Start FixMyStreet Stack
         working-directory: ./fixmystreet
-        run: docker compose -f docker-compose-dev.yml up -d
-        
+        run: docker compose -f docker/docker-compose-dev.yml up -d
+
       # 5. Wait for Nginx proxy on Port 8000 to wake up completely
       - name: Wait for FixMyStreet to be ready
         run: |
