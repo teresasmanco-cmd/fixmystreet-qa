@@ -38,6 +38,12 @@ jobs:
         working-directory: ./fixmystreet-qa
         run: npx playwright install --with-deps
 
+      # 3.5. Configure FixMyStreet to route emails to MailHog
+      - name: Configure MailHog SMTP in General Config
+        run: |
+          echo "SMTP_SMARTHOST: 'localhost'" >> fixmystreet/conf/general.yml
+          echo "SMTP_PORT: 1025" >> fixmystreet/conf/general.yml
+
       # 4. Start the application infrastructure using the core repo's docker-compose
       - name: Start FixMyStreet Stack
         working-directory: ./fixmystreet

@@ -2,7 +2,7 @@ import { test, expect } from "@/specs/fixtures";
 
 test.describe("user reports", () => {
   //Signed in users and not signed in users get different paths - start with not signed in first
-  test("verify full user journey and email confirmation", async ({ homePage, reportsPage, request }) => {
+  test("verify full user journey and email confirmation", async ({ homePage, reportsPage, request, page }) => {
     await homePage.goto();
     //WIP, haven't done all the work here yet
     await test.step("enter a postcode in the text input field", async () => {
@@ -32,18 +32,33 @@ test.describe("user reports", () => {
     });
 
     await test.step("get the confirmation email via api and navigate to the confirmation link", async () => {
-      const response = await request.get("http://localhost:8025/api/v2/search?kind=to&query=test.email@test.com");
-      expect(response.ok()).toBeTruthy();
+      let emailBody = "";
 
-      const data = await response.json();
-      // Prints the json file into the terminal
-      // console.log(JSON.stringify(data, null, 2));
+      // Poll MailHog up to 10 times, waiting 1 second between tries until the email arrives
+      for (let i = 0; i < 10; i++) {
+        const response = await request.get("http://localhost:8025/api/v2/search?kind=to&query=test.email@test.com");
+        expect(response.ok()).toBeTruthy();
 
-      const latestMessage = data.items[0];
-      const emailBody = latestMessage.Content.Body;
+        const data = await response.json();
 
-      // Confirmation link extracted via regex, navigate to it
+        if (data.items && data.items.length > 0) {
+          emailBody = data.items[0].Content.Body;
+          break; // Exit the loop as soon as we find our email
+        }
+
+        // If the inbox is still empty, wait 1 second and loop again
+        await page.waitForTimeout(1000);
+      }
+
+      // Ensure we actually found an email body before running the regex
+      expect(emailBody).not.toBe("");
+
       const match = emailBody.match(/http:\/\/localhost:8000\/[^\s]+/);
+
+      if (!match) {
+        throw new Error("Confirmation URL link could not be found in the email body!");
+      }
+
       await reportsPage.page.goto(match[0]);
     });
   });
