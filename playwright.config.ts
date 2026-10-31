@@ -36,6 +36,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    /* Locks the viewport to a standard size - introduced to click on a specific point on a map */
+    viewport: { width: 1280, height: 720 },
   },
 
   /* Configure projects for major browsers */
