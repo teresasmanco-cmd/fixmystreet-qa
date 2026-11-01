@@ -8,3 +8,5 @@ I had done some API requests at work, but here I got to extract the url to send 
 
 For the time being I'm using a hybrid approach for the E2E user report test: on the local environment the test interacts directly with an instance of Mailhog via its rest API (/api/v2/search) to fetch, parse and validate real confirmation emails.
 On Github Actions an if statement (process.env.CI) provides a mocked mail payload fallback but still validates the preceding UI form submission, map interactions and generated url token in the email the user receives.
+
+TODO: write method to enter an issue so it reads more intuitively in code.
