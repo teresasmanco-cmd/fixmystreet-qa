@@ -33,7 +33,7 @@ test.describe("user reports", () => {
 
     await test.step("get the confirmation email via api and navigate to the confirmation link", async () => {
       let emailBody = "";
-
+      //TODO: Figure out how to make the CI version work
       //Mocking the response on CI as I can't set that up with Mailhog
       if (process.env.CI) {
         emailBody = "Please click here to confirm: http://localhost:8000/P/MOCK_TOKEN_123";
